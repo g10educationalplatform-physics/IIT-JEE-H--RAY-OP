@@ -473,38 +473,32 @@ const Q = [
   "solution": "In ∆ABC, A=90°-∠B=90°-θ\nUsing geometry, $r_2=A=90°-θ\n$ For the light not to cross the face AC, the angle of incidence $r_2$ should be greater than the critical angle $θ_c:\nr_2>θ_c   ⟹sin(90°-θ)>sin θ_c\n⟹ cos θ > sin θ_c   ⟹ cos θ > (6/5)/(2/3)=4/5\n$ Since the cosine function decreases as the angle increases (between 0° and 90°), for cos θ to be greater than cos 37°, the angle θ must be smaller than 37°:\n∴θ<37°. Therefore, the correct answer is option (B).",
   "solution_steps": [
     "Step 1: Identify the condition for the ray to not cross face $AC$.",
-    "For the ray to not cross face $AC$, total internal reflection (TIR) must occur at face $AC$. Therefore, the angle of incidence at face $AC$ must be greater than the critical angle $θ_c$.",
+    "For the ray to not cross face $AC$, total internal reflection (TIR) must occur at face $AC$. Therefore, the angle of incidence at face $AC$ must be greater than the critical angle $\\theta_c$.",
     
     "Step 2: Find the angle of incidence at face $AC$ using geometry.",
     "In triangle $ABC$, since it is a right-angled prism:",
     "$$A = 90^\\circ - B = 90^\\circ - \\theta$$",
     "Thus the angle of incidence at face $AC$ is:",
-    "$$r_2 = 90^\\circ - \\theta$$",
+    "$$i = 90^\\circ - \\theta$$",
     
-    "Step 3: Apply the condition for total internal reflection.",
-    "$$r_2 > θ_c$$",
-    "$$90^\\circ - θ > θ_c$$",
+    "Step 3: Calculate the critical angle.",
+    "The light goes from glass ($n = 3/2$) to the surrounding medium ($n = 6/5$):",
+    "$$\\sin \\theta_c = \\frac{n_{\\text{rarer}}}{n_{\\text{denser}}} = \\frac{6/5}{3/2} = \\frac{6}{5} \\times \\frac{2}{3} = \\frac{4}{5}$$",
+    "Since $\\sin 53^\\circ = 4/5$, we get:",
+    "$$\\theta_c = 53^\\circ$$",
     
-    "Step 4: Convert into trigonometric inequality.",
-    "Taking sine on both sides:",
-    "$$\\sin(90^\\circ - θ) > \\sin θ_c$$",
-    "$$\\cos θ > \\sin θ_c$$",
+    "Step 4: Apply the condition for total internal reflection.",
+    "$$i > \\theta_c$$",
+    "$$90^\\circ - \\theta > 53^\\circ$$",
     
-    "Step 5: Use geometry to evaluate the inequality.",
-    "From the prism geometry, $\\sin θ_c = (6/5)/(2/3) = 4/5$",
-    "Thus:",
-    "$$\\cos θ > 4/5$$",
-    
-    "Step 6: Compare with known cosine value.",
-    "Since $\\cos 37^\\circ = 4/5$, and cosine decreases from $0^\\circ$ to $90^\\circ$, for:",
-    "$$\\cos θ > 4/5$$",
-    "Since the cosine function decreases as the angle increases (between 0° and 90°), for cos θ to be greater than cos 37°, the angle θ must be smaller than 37°we must have:",
+    "Step 5: Solve for $\\theta$.",
     "$$\\theta < 37^\\circ$$",
     
     "Final Answer: $\\theta < 37^\\circ$. (Option B)"
   ],
-  "pptUrl": ""
+ "pptUrl": ""
 }
+
 ,
 
 {
@@ -1073,3 +1067,4 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
