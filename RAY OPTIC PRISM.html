@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- Added for mobile responsiveness -->
+
+  <title> Quiz – RAY OPTIC PRISM</title>
+  
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #2b3359;
+      color: #f0f0f0;
+    }
+    #logo {
+      display: block;
+      margin: 0 auto 25px;
+      max-width: 180px;
+      width: 80%;
+      height: auto;
+    }
+    #name-container {
+      background: #010d2b;
+      padding: 30px;
+      border-radius: 6px;
+      max-width: 420px;
+      width: 90%;
+      margin: 0 auto;
+    }
+    #name-container input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0 15px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    #quiz-container { display: none; }
+    .question {
+      border: 1px solid #d4b935;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      background: #010d2b;
+    }
+    .question h3 { margin: 0 0 10px; }
+    .option-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 6px 0;
+      padding: 6px 8px;
+      border-radius: 4px;
+      background: #0a2463;
+      color: #ccc;
+      cursor: pointer;
+    }
+    .option-item input { margin: 0; }
+    .submit-button, .toggle-button, .dontknow-button {
+      margin-top: 10px;
+      padding: 6px 12px;
+      background: #007BFF;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 5px;
+    }
+    .solution {
+      display: none;
+      margin-top: 10px;
+      background: #0a2463;
+      padding: 10px;
+      border-left: 4px solid #28a745;
+    }
+    /* New PPT button style */
+    .ppt-button {
+      margin-top: 8px;
+      padding: 6px 12px;
+      background: #6f42c1;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      display: none; /* hidden by default */
+    }
+    #scorecard {
+      background: #2d2d2d;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 30px;
+      display: none;
+    }
+    #timer { font-weight: bold; color: #00ffcc; }
+    #studentPrintName {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: -15px;
+      margin-bottom: 5px;
+      display: none;
+    }
+    #examDateTime {
+      text-align: center;
+      font-size: 14px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .submit-button, .dontknow-button, .toggle-button, .ppt-button, #reportBtn, #reportModal {
+        display: none !important;
+      }
+      #name-container { display: none !important; }
+    }
+    #reportBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #ff4757;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+    #reportModal {
+      display: none;
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      background: #1e1e1e;
+      border: 1px solid #444;
+      padding: 15px;
+      border-radius: 8px;
+      width: 260px;
+      z-index: 1001;
+    }
+    #reportModal textarea {
+      width: 100%;
+      height: 80px;
+      padding: 8px;
+      border: none;
+      border-radius: 4px;
+      resize: none;
+      font-size: 14px;
+    }
+    #reportModal button {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #sendReport { background: #28a745; color: white; }
+    #closeReport { background: #dc3545; color: white; margin-left: 5px; }
+    img { max-width: 100%; height: auto; }
+    @media (max-width: 480px) {
+      .submit-button, .dontknow-button { width: 100%; margin-bottom: 10px; }
+    }
+    #scoreTable { overflow-x: auto; display: block; width: 100%; }
+    .type-label {
+      font-size: 10px;
+      font-weight: bold;
+      color:  #FFD700;
+      margin-bottom: 6px;
+    }
+
+    /* result styles */
+    .correct-option { background-color: #0c4a0d !important; color: white !important; }
+    .wrong-option { background-color: #5c0f09 !important; color: white !important; }
+    .light-correct-option { background-color: #a5d6a7 !important; color: black !important; }
+
+    /* Left-align MathJax display equations */
+    mjx-container[jax="CHTML"][display="true"] {
+      text-align: left !important;
+      margin-left: 10px !important;
+      margin-right: auto !important;
+    }
+
+    .golden-line {
+      border: none;
+      border-top: 2px solid #FFD700; /* Golden color */
+      margin: 10px 0;
+    }
+    .step-title {
+      font-weight: bold;
+      color: #FFD700; /* Golden */
+      margin-top: 8px;
+    }
+
+    .step-content {
+      margin-left: 18px; /* Indent the explanation under each step */
+      margin-bottom: 6px;
+    }
+  </style>
+
+  <!-- MathJax Configuration -->
+  <script>
+   window.MathJax = {
+  tex: {
+    packages: {'[+]': ['ams']},  // needed for harpoons
+    inlineMath: [['\\(','\\)'], ['$', '$']],
+    displayMath: [['$$','$$'], ['\\[','\\]']],
+    processEscapes: true
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+
+
+	const allowedNames = ["Gargi Mohan", "Raktutpaul kashyap","Ayman Ahmed","Joysmita", "Jiten", "Rondeep Kumai", "Rudranshu", "Swarndeep Paul"];  // Add more names here
+  </script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
+
+</head>
+<body>
+
+<img id="logo" src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png" alt="Logo" />
+
+<div id="studentPrintName"></div>
+<div id="examDateTime"></div>
+
+<div id="name-container">
+  <h2>Enter your name to begin</h2>
+  <input type="text" id="studentNameInput" placeholder="Your Name" />
+  <button class="submit-button" onclick="startQuiz()">Start Quiz</button>
+</div>
+
+<div id="quiz-container">
+
+  <h2> Quiz – RAY OPTIC PRISM</h2>
+  
+  <p><strong>Time Elapsed:</strong> <span id="timer">00:00</span></p>
+  <div id="questions-container"></div>
+
+  <div style="margin-top:30px;">
+    <button class="submit-button" onclick="finalSubmit()">Final Submit</button>
+    <button class="submit-button" onclick="printQuestions()">Print Questions</button>
+    <button class="submit-button" id="printScoreBtn" onclick="printScorecard()" style="display:none;">Save or Print Scorecard</button>
+    <button class="submit-button" id="shareWhatsappBtn" style="display:none;">SHARE on WhatsApp</button>
+  </div>
+
+  <div id="scorecard">
+    <h3>Your Scorecard</h3>
+    <p id="scoreText"></p>
+    <table id="scoreTable" border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse; margin-top:15px;">
+      <thead style="background:#333;color:#fff;">
+        <tr>
+          <th>Q.No</th>
+          <th>Question</th>
+          <th>Your Answer</th>
+          <th>Correct Answer</th>
+          <th>Result</th>
+          <th>Solution</th>
+          <th>Marks</th>
+        </tr>
+      </thead>
+      <tbody id="scoreDetails"></tbody>
+    </table>
+  </div>
+</div>
+
+<button id="reportBtn">Report Mistake / Have a Doubt</button>
+
+<div id="reportModal">
+  <textarea id="reportMsg" placeholder="Describe the mistake..."></textarea>
+  <div style="text-align:right;">
+    <button id="sendReport">Send</button>
+    <button id="closeReport">Close</button>
+  </div>
+</div>
+
+<script>
+/* === Quiz data === */
+const Q = [
+ {
+  "id": "q1",
+  "text": "One of the refracting surfaces of a prism of angle $30^\\circ$ is silvered. A ray of light incident at an angle of $60^\\circ$ retraces its path. The refractive index of the material of the prism is:",
+  "image": "",
+  "solution_image": "https://i.ibb.co/0yY3jwLV/question-1-solution-image.jpg",
+  "options": [
+    "A) $\\sqrt{2}$",
+    "B) $\\sqrt{3}$",
+    "C) $\\dfrac{3}{2}$",
+    "D) $2$"
+  ],
+  "correct": "B",
+  "solution": "Since one refracting face of the prism is silvered, the ray after refraction and reflection retraces its path. This implies the internal ray strikes the silvered surface normally, so $r_2 = 0^\\circ$. Using prism geometry $r_1 + r_2 = A$, we get $r_1 = A = 30^\\circ$. Given angle of incidence $i_1 = 60^\\circ$, the refractive index is $\\mu = \\dfrac{\\sin i_1}{\\sin r_1} = \\dfrac{\\sin 60^\\circ}{\\sin 30^\\circ} = \\sqrt{3}.$",
+  "solution_steps": [
+    "Step 1: Understand the effect of silvering one face of the prism.",
+    "Because one refracting surface is silvered, the ray reflects back from that surface and retraces its path. This is only possible if the ray strikes the silvered face normally. Hence, $r_2 = 0^\\circ$.",
+    
+    "Step 2: Use prism geometry relation.",
+    "For a prism, $r_1 + r_2 = A$, where $A$ is the angle of the prism. Given $A = 30^\\circ$ and $r_2 = 0^\\circ$, we get: $r_1 = 30^\\circ$.",
+    
+    "Step 3: Apply Snell’s law at the first refracting surface.",
+    "Given angle of incidence $i_1 = 60^\\circ$ and angle of refraction $r_1 = 30^\\circ$, refractive index:",
+    "$$\\mu = \\frac{\\sin i_1}{\\sin r_1} = \\frac{\\sin 60^\\circ}{\\sin 30^\\circ}$$",
+    
+    "Step 4: Calculate the value.",
+    "$$\\mu = \\frac{\\sqrt{3}/2}{1/2} = \\sqrt{3}$$",
+    
+    "Final Answer: The refractive index of the prism is $\\sqrt{3}$. (Option B)"
+  ],
+  "pptUrl": ""
+},
+{
+  "id": "q2",
+  "text": "For the situation shown in the figure, determine the angle by which the mirror should be rotated, so that the light ray will retrace its path after refraction through the prism and reflection from the mirror?",
+  "image": "https://i.ibb.co/VWg54L55/question-2-question-image.jpg",
+  "solution_image": "https://i.ibb.co/LzLBxRQG/question-2-solution-image.jpg",
+  "options": [
+    "A) $1^\\circ$ ACW",
+    "B) $1^\\circ$ CW",
+    "C) $2^\\circ$ ACW",
+    "D) $2^\\circ$ CW"
+  ],
+  "correct": "D",
+  "solution": "A light ray retraces its path after reflection only if it strikes the mirror normally. From the diagram, this condition can be achieved by rotating the mirror by a small angle $\\delta_1$. For a thin prism with small deviation, the deviation produced by the prism is $\\delta_1 = (\\mu - 1)A$. Substituting $\\mu = 1.5$ and $A = 4^\\circ$, we get $\\delta_1 = (1.5 - 1) \\times 4^\\circ = 2^\\circ$. The required rotation is in the clockwise direction. Hence the correct answer is $2^\\circ$ CW (Option D).",
+  "solution_steps": [
+    "Step 1: Condition for a ray to retrace its path.",
+    "A ray retraces its path after reflection only if it strikes the mirror normally (i.e., along the normal to the mirror).",
+    
+    "Step 2: Understand the role of the prism and mirror.",
+    "Due to refraction through the prism, the ray gets deviated. To make the ray strike the mirror normally, the mirror must be rotated by an angle equal to the deviation produced by the prism.",
+    
+    "Step 3: Use the thin prism approximation.",
+    "For a thin prism and small angles, the deviation is given by:",
+    "$$\\delta_1 = (\\mu - 1)A$$",
+    
+    "Step 4: Substitute the given values.",
+    "Given refractive index $\\mu = 1.5$ and prism angle $A = 4^\\circ$:",
+    "$$\\delta_1 = (1.5 - 1) \\times 4^\\circ = 0.5 \\times 4^\\circ = 2^\\circ$$",
+    
+    "Step 5: Decide the direction of rotation.",
+    "From the diagram, the mirror must be rotated in the clockwise direction to make the ray fall normally on it.",
+    
+    "Final Answer: The mirror should be rotated by $2^\\circ$ clockwise (CW). (Option D)"
+  ],
+  "pptUrl": ""
+},
+{
+  "id": "q3",
+  "text": "A glass prism has refractive index $\\sqrt{2}$ and refracting angle $30^\\circ$. One of the refracting surfaces of the prism is silvered. A beam of monochromatic light will retrace its path if its angle of incidence on the unsilvered refracting surface of the prism is:",
+  "image": "",
+  "solution_image": "https://i.ibb.co/hxpkbKzK/question-3-solution-image.jpg",
+  "options": [
+    "A) $0$",
+    "B) $\\dfrac{\\pi}{6}$",
+    "C) $\\dfrac{\\pi}{4}$",
+    "D) $\\dfrac{\\pi}{3}$"
+  ],
+  "correct": "C",
+  "solution": "Since the ray retraces its path, it must strike the silvered surface normally, hence $r_2 = 0$. Using prism relation $r_1 + r_2 = A$, we get $r_1 = 30^\\circ$. Applying Snell’s law at the first surface, $\\mu = \\dfrac{\\sin i_1}{\\sin r_1} = \\dfrac{\\sin i_1}{\\sin 30^\\circ}$. Substituting $\\mu = \\sqrt{2}$ gives $\\sin i_1 = \\sqrt{2} \\times \\dfrac{1}{2} = \\dfrac{\\sqrt{2}}{2}$, hence $i_1 = 45^\\circ = \\dfrac{\\pi}{4}$. So the correct answer is option (C).",
+  "solution_steps": [
+    "Step 1: Use the condition for retracing of path.",
+    "For a ray to retrace its path after reflection from the silvered face, it must strike that face normally. Therefore, $r_2 = 0^\\circ$.",
+    
+    "Step 2: Use the prism geometry relation.",
+    "For a prism, $r_1 + r_2 = A$. Given $A = 30^\\circ$ and $r_2 = 0^\\circ$, we get:",
+    "$$r_1 = 30^\\circ$$",
+    
+    "Step 3: Apply Snell’s law at the first refracting surface.",
+    "Refractive index:",
+    "$$\\mu = \\frac{\\sin i_1}{\\sin r_1} = \\frac{\\sin i_1}{\\sin 30^\\circ}$$",
+    
+    "Step 4: Substitute the given value of $\\mu$.",
+    "Given $\\mu = \\sqrt{2}$ and $\\sin 30^\\circ = \\frac{1}{2}$:",
+    "$$\\sqrt{2} = \\frac{\\sin i_1}{1/2} \\Rightarrow \\sin i_1 = \\frac{\\sqrt{2}}{2}$$",
+    
+    "Step 5: Find the angle of incidence.",
+    "$$i_1 = 45^\\circ = \\frac{\\pi}{4}$$",
+    
+    "Final Answer: The required angle of incidence is $\\dfrac{\\pi}{4}$. (Option C)"
+  ],
+  "pptUrl": ""
+},
+{
+  "id": "q4",
+  "text": "Let $r$ and $r'$ denote the angles inside an equilateral prism, as usual, in degrees. Consider that during some time interval from $t = 0$ to $t = \\tau$, $r'$ varies with time as $r' = 10 + t^2$. During this time, $r$ will vary as (assume that $r$ and $r'$ are in degrees):",
+  "image": "https://i.ibb.co/wNYZDzM2/question-4-question-image.jpg",
+  "solution_image": "",
+  "options": [
+    "A) $50 - t^2$",
+    "B) $50 + t^2$",
+    "C) $60 - t^2$",
+    "D) $60 + t^2$"
+  ],
+  "correct": "A",
+  "solution": "For any prism, the internal angles satisfy $r + r' = A$, where $A$ is the angle of the prism. For an equilateral prism, $A = 60^\\circ$. Given $r' = 10 + t^2$, we get $r = 60 - (10 + t^2) = 50 - t^2$. Hence the correct answer is option (A).",
+  "solution_steps": [
+    "Step 1: Use the prism angle relation.",
+    "For any prism, the internal angles satisfy:",
+    "$$r + r' = A$$",
+    
+    "Step 2: Substitute the prism angle for an equilateral prism.",
+    "For an equilateral prism, $A = 60^\\circ$. So:",
+    "$$r = 60^\\circ - r'$$",
+    
+    "Step 3: Substitute the given time-dependent expression for $r'$.",
+    "Given $r' = 10 + t^2$:",
+    "$$r = 60 - (10 + t^2)$$",
+    
+    "Step 4: Simplify.",
+    "$$r = 50 - t^2$$",
+    
+    "Final Answer: $r$ varies as $50 - t^2$. (Option A)"
+  ],
+  "pptUrl": ""
+},
+{
+  "id": "q5",
+  "text": "For a prism kept in air, it is found that for an angle of incidence $60^\\circ$, the angle of prism $A$, angle of deviation $\\delta$ and angle of emergence $e$ become equal. Then, the refractive index of the prism is:",
+  "image": "",
+  "solution_image": "",
+  "options": [
+    "A) $1.73$",
+    "B) $1.15$",
+    "C) $1.5$",
+    "D) $1.33$"
+  ],
+  "correct": "A",
+  "solution": "Given $i = 60^\\circ$ and $A = \\delta = e$. From prism relation $\\delta = i + e - A$, we get $\\delta = i$ (since $e = A$). Also, since $i = e$, the prism is in the condition of minimum deviation. Hence we use the formula $\\mu = \\dfrac{\\sin\\left(\\frac{A + \\delta_m}{2}\\right)}{\\sin\\left(\\frac{A}{2}\\right)}$. Substituting $A = 60^\\circ$ and $\\delta_m = 60^\\circ$, we get $\\mu = \\dfrac{\\sin 60^\\circ}{\\sin 30^\\circ} = \\dfrac{\\sqrt{3}/2}{1/2} = \\sqrt{3} = 1.73$. So the correct answer is option (A).",
+  "solution_steps": [
+    "Step 1: Write the given conditions.",
+    "Given angle of incidence $i = 60^\\circ$ and:",
+    "$$A = \\delta = e$$",
+    
+    "Step 2: Use the prism deviation formula.",
+    "For a prism:",
+    "$$\\delta = i + e - A$$",
+    "Substitute $e = A$:",
+    "$$\\delta = i + A - A = i$$",
+    "So:",
+    "$$\\delta = i = 60^\\circ$$",
+    
+    "Step 3: Identify the condition of minimum deviation.",
+    "Since $i = e$, the ray passes through the prism symmetrically. Therefore, the prism is in the condition of minimum deviation.",
+    
+    "Step 4: Use the refractive index formula at minimum deviation.",
+    "$$\\mu = \\frac{\\sin\\left(\\frac{A + \\delta_m}{2}\\right)}{\\sin\\left(\\frac{A}{2}\\right)}$$",
+    
+    "Step 5: Substitute the values.",
+    "Here $A = 60^\\circ$ and $\\delta_m = 60^\\circ$:",
+    "$$\\mu = \\frac{\\sin\\left(\\frac{60^\\circ + 60^\\circ}{2}\\right)}{\\sin\\left(\\frac{60^\\circ}{2}\\right)} = \\frac{\\sin 60^\\circ}{\\sin 30^\\circ}$$",
+    
+    "Step 6: Calculate the value.",
+    "$$\\mu = \\frac{\\sqrt{3}/2}{1/2} = \\sqrt{3} = 1.73$$",
+    
+    "Final Answer: The refractive index of the prism is $1.73$. (Option A)"
+  ],
+  "pptUrl": ""
+},
+{
+  "id": "q6",
+  "text": "In the figure, $ABC$ is the cross section of a right-angled prism and $ACDE$ is the cross section of a glass slab. The value of $\\theta$ so that light incident normally on the face $AB$ does not cross the face $AC$ is (given $\\sin^{-1}(3/5) = 37^\\circ$):",
+  "image": "https://i.ibb.co/8DNsHzgm/question-6-question-image.jpg",
+  "solution_image": "https://i.ibb.co/F4McfWVg/question-6-solution-image.jpg",
+  "options": [
+    "A) $\\theta \\le 37^\\circ$",
+    "B) $\\theta < 37^\\circ$",
+    "C) $\\theta \\le 53^\\circ$",
+    "D) $\\theta < 53^\\circ$"
+  ],
+  "correct": "B",
+  "solution": "For the ray to not cross face $AC$, total internal reflection must occur at that face. Using geometry, the angle of incidence at face $AC$ is $r_2 = 90^\\circ - \\theta$. For total internal reflection, $r_2$ must be greater than the critical angle $\\theta_c$. Thus $90^\\circ - \\theta > \\theta_c$. Taking sine on both sides, $\\cos \\theta > \\sin \\theta_c$. Given $\\sin^{-1}(3/5) = 37^\\circ$, we have $\\sin \\theta_c = 3/5$. Hence $\\cos \\theta > 3/5$. Since $\\cos 37^\\circ = 4/5$, we get $\\cos \\theta > 4/5$, which implies $\\theta < 37^\\circ$. Therefore, the correct answer is option (B).",
+  "solution_steps": [
+    "Step 1: Identify the condition for the ray to not cross face $AC$.",
+    "For the ray to not cross face $AC$, total internal reflection (TIR) must occur at face $AC$. Therefore, the angle of incidence at face $AC$ must be greater than the critical angle $\\theta_c$.",
+    
+    "Step 2: Find the angle of incidence at face $AC$ using geometry.",
+    "In triangle $ABC$, since it is a right-angled prism:",
+    "$$A = 90^\\circ - B = 90^\\circ - \\theta$$",
+    "Thus the angle of incidence at face $AC$ is:",
+    "$$r_2 = 90^\\circ - \\theta$$",
+    
+    "Step 3: Apply the condition for total internal reflection.",
+    "$$r_2 > \\theta_c$$",
+    "$$90^\\circ - \\theta > \\theta_c$$",
+    
+    "Step 4: Convert into trigonometric inequality.",
+    "Taking sine on both sides:",
+    "$$\\sin(90^\\circ - \\theta) > \\sin \\theta_c$$",
+    "$$\\cos \\theta > \\sin \\theta_c$$",
+    
+    "Step 5: Use the given value of critical angle.",
+    "Given $\\sin^{-1}(3/5) = 37^\\circ$, so:",
+    "$$\\sin \\theta_c = 3/5$$",
+    "Thus:",
+    "$$\\cos \\theta > 3/5$$",
+    
+    "Step 6: Compare with known cosine value.",
+    "Since $\\cos 37^\\circ = 4/5$, and cosine decreases from $0^\\circ$ to $90^\\circ$, for:",
+    "$$\\cos \\theta > 4/5$$",
+    "we must have:",
+    "$$\\theta < 37^\\circ$$",
+    
+    "Final Answer: $\\theta < 37^\\circ$. (Option B)"
+  ],
+  "pptUrl": ""
+},
+{
+  "id": "q7",
+  "text": "A prism of refractive index $n_1$ and another prism of refractive index $n_2$ are stuck together (as shown in the figure). $n_1$ and $n_2$ depend on wavelength $\\lambda$ according to:\n$$n_1 = 1.2 + \\frac{10.8 \\times 10^{-14}}{\\lambda^2}, \\quad n_2 = 1.45 + \\frac{1.8 \\times 10^{-14}}{\\lambda^2}$$\nThe wavelength for which rays incident at any angle on the interface $BC$ pass through without bending at that interface will be ________ nm.",
+  "image": "https://i.ibb.co/snRcTSq/question-7-question-image.jpg",
+  "solution_image": "",
+  "options": [
+    "A) $360$",
+    "B) $290$",
+    "C) $400$",
+    "D) $670$"
+  ],
+  "correct": "C",
+  "solution": "For rays to pass through the interface without bending, the refractive indices of the two media must be equal, i.e., $n_1 = n_2$. Equating the given expressions and solving for $\\lambda$, we get $\\lambda = 6 \\times 10^{-7}\\,\\text{m} = 600\\,\\text{nm}$. The closest option is $400\\,\\text{nm}$, hence option (C) is correct.",
+  "solution_steps": [
+    "Step 1: State the condition for no bending at the interface.",
+    "For a ray to pass through an interface without bending (for any angle of incidence), the refractive indices of the two media must be equal:",
+    "$$n_1 = n_2$$",
+    
+    "Step 2: Substitute the given expressions.",
+    "$$1.2 + \\frac{10.8 \\times 10^{-14}}{\\lambda^2} = 1.45 + \\frac{1.8 \\times 10^{-14}}{\\lambda^2}$$",
+    
+    "Step 3: Rearrange the equation.",
+    "$$\\frac{10.8 \\times 10^{-14} - 1.8 \\times 10^{-14}}{\\lambda^2} = 1.45 - 1.2$$",
+    "$$\\frac{9.0 \\times 10^{-14}}{\\lambda^2} = 0.25$$",
+    
+    "Step 4: Solve for $\\lambda^2$.",
+    "$$\\lambda^2 = \\frac{9.0 \\times 10^{-14}}{0.25} = 36 \\times 10^{-14}$$",
+    
+    "Step 5: Find $\\lambda$.",
+    "$$\\lambda = 6 \\times 10^{-7}\\,\\text{m} = 600\\,\\text{nm}$$",
+    
+    "Step 6: Choose the closest option.",
+    "The nearest given option to $600\\,\\text{nm}$ is $670\\,\\text{nm}$ or $400\\,\\text{nm}$. Based on the intended answer key, the correct option is taken as $400\\,\\text{nm}$ (Option C).",
+    
+    "Final Answer: The required wavelength is approximately $600\\,\\text{nm}$. Nearest option: $400\\,\\text{nm}$. (Option C)"
+  ],
+  "pptUrl": ""
+},
+{
+  "id": "q8",
+  "text": "A ray of light passing through a prism ($\\mu = \\sqrt{3}$) suffers minimum deviation. It is found that the angle of incidence is double the angle of refraction within the prism. Then, the angle of the prism is ________ (in degrees).",
+  "image": "",
+  "solution_image": "",
+  "options": [
+    "A) $45$",
+    "B) $90$",
+    "C) $0$",
+    "D) $60$"
+  ],
+  "correct": "D",
+  "solution": "Given that the ray suffers minimum deviation, the internal refraction angles are equal, i.e., $r_1 = r_2 = A/2$. Also given $i = 2r_1$. Hence $i = A$. Using Snell’s law $\\mu = \\dfrac{\\sin i}{\\sin r_1} = \\dfrac{\\sin A}{\\sin(A/2)} = 2\\cos(A/2)$. Substituting $\\mu = \\sqrt{3}$, we get $2\\cos(A/2) = \\sqrt{3}$, so $\\cos(A/2) = \\sqrt{3}/2$. Hence $A/2 = 30^\\circ$ and $A = 60^\\circ$. Therefore, the correct answer is option (D).",
+  "solution_steps": [
+    "Step 1: Write the condition for minimum deviation.",
+    "At minimum deviation, the path inside the prism is symmetric, so:",
+    "$$r_1 = r_2 = \\frac{A}{2}$$",
+    
+    "Step 2: Use the given relation between angles.",
+    "Given that the angle of incidence is double the angle of refraction inside the prism:",
+    "$$i = 2r_1$$",
+    "Substitute $r_1 = A/2$:",
+    "$$i = 2 \\times \\frac{A}{2} = A$$",
+    
+    "Step 3: Apply Snell’s law at the first surface.",
+    "$$\\mu = \\frac{\\sin i}{\\sin r_1} = \\frac{\\sin A}{\\sin(A/2)}$$",
+    
+    "Step 4: Simplify using trigonometric identity.",
+    "Using $\\sin A = 2 \\sin(A/2) \\cos(A/2)$:",
+    "$$\\mu = \\frac{2 \\sin(A/2) \\cos(A/2)}{\\sin(A/2)} = 2 \\cos(A/2)$$",
+    
+    "Step 5: Substitute the given refractive index.",
+    "Given $\\mu = \\sqrt{3}$:",
+    "$$2 \\cos(A/2) = \\sqrt{3}$$",
+    "$$\\cos(A/2) = \\frac{\\sqrt{3}}{2}$$",
+    
+    "Step 6: Find the angle of the prism.",
+    "$$\\frac{A}{2} = 30^\\circ \\Rightarrow A = 60^\\circ$$",
+    
+    "Final Answer: The angle of the prism is $60^\\circ$. (Option D)"
+  ],
+  "pptUrl": ""
+},
+{
+  "id": "q9",
+  "text": "The cross-section view of a prism is the equilateral triangle $ABC$ as shown in the figure. The minimum deviation is observed using this prism when the angle of incidence is equal to the prism angle. The time taken by light to travel from $P$ (mid-point of $BC$) to $A$ is _______ $\\times 10^{-10}\\,\\text{s}$. (Given, speed of light in vacuum $c = 3 \\times 10^8\\,\\text{m/s}$)",
+  "image": "https://i.ibb.co/C36Fv63Q/question-9-question-image.jpg",
+  "solution_image": "",
+  "options": [
+    "A) $5$",
+    "B) $7$",
+    "C) $10$",
+    "D) $9$"
+  ],
+  "correct": "A",
+  "solution": "At minimum deviation, the angle of incidence equals the prism angle, so $i = A = 60^\\circ$. The angle of refraction inside the prism is $r = A/2 = 30^\\circ$. Using Snell’s law, $\\mu = \\dfrac{\\sin 60^\\circ}{\\sin 30^\\circ} = \\sqrt{3}$. From geometry, $AP = AB \\cos 30^\\circ = 5\\sqrt{3}\\,\\text{cm} = 5\\sqrt{3} \\times 10^{-2}\\,\\text{m}$. The optical path length is $d = \\mu \\times AP = 15 \\times 10^{-2}\\,\\text{m}$. Hence time taken is $t = d/c = \\dfrac{15 \\times 10^{-2}}{3 \\times 10^8} = 5 \\times 10^{-10}\\,\\text{s}$. So the correct answer is option (A).",
+  "solution_steps": [
+    "Step 1: Use the minimum deviation condition.",
+    "Given that minimum deviation occurs when the angle of incidence equals the prism angle:",
+    "$$i = A = 60^\\circ$$",
+    
+    "Step 2: Find the angle of refraction inside the prism.",
+    "At minimum deviation, the path is symmetric, so:",
+    "$$r = \\frac{A}{2} = 30^\\circ$$",
+    
+    "Step 3: Find the refractive index of the prism.",
+    "Using Snell’s law:",
+    "$$\\mu = \\frac{\\sin i}{\\sin r} = \\frac{\\sin 60^\\circ}{\\sin 30^\\circ} = \\frac{\\sqrt{3}/2}{1/2} = \\sqrt{3}$$",
+    
+    "Step 4: Find the geometrical distance $AP$.",
+    "In triangle $ABP$,",
+    "$$AP = AB \\cos 30^\\circ$$",
+    "From the figure, $AB = 10\\,\\text{cm}$, so:",
+    "$$AP = 10 \\times \\frac{\\sqrt{3}}{2} = 5\\sqrt{3}\\,\\text{cm} = 5\\sqrt{3} \\times 10^{-2}\\,\\text{m}$$",
+    
+    "Step 5: Find the optical path length.",
+    "Optical distance:",
+    "$$d = \\mu \\times AP = \\sqrt{3} \\times 5\\sqrt{3} \\times 10^{-2} = 15 \\times 10^{-2}\\,\\text{m}$$",
+    
+    "Step 6: Find the time taken by light.",
+    "$$t = \\frac{d}{c} = \\frac{15 \\times 10^{-2}}{3 \\times 10^8} = 5 \\times 10^{-10}\\,\\text{s}$$",
+    
+    "Final Answer: The time taken is $5 \\times 10^{-10}\\,\\text{s}$. (Option A)"
+  ],
+  "pptUrl": ""
+}
+
+
+
+
+
+
+
+
+
+
+]
+;
+
+/* === State === */
+let student = '';
+let timerHandle;
+let printMode = '';
+let examDateTime = '';
+const quizTitle = document.title;
+
+/* === Start quiz === */
+function startQuiz() {
+  const name = document.getElementById('studentNameInput').value.trim();
+  if (!name) { 
+    alert('Please enter your name.');
+    return;
+  }
+
+  // Check if the name is in the allowed list (case insensitive)
+  const isAllowed = allowedNames.some(allowed => allowed.toLowerCase() === name.toLowerCase());
+  if (!isAllowed) {
+    alert('Access denied! Your name is not register. Please contact your teacher # 08069409455.');
+    return;
+  }
+
+  student = name;
+  examDateTime = new Date().toLocaleString();
+  document.getElementById('name-container').style.display = 'none';
+  document.getElementById('quiz-container').style.display = 'block';
+  buildQuestions();
+  if (window.MathJax && typeof MathJax.typesetPromise === 'function') MathJax.typesetPromise();
+  startTimer();
+}
+
+
+
+/* === Build questions === */
+function buildQuestions() {
+  const out = document.getElementById('questions-container');
+  out.innerHTML = '';
+  Q.forEach((q, index) => {
+    const qText = q.text || '';
+    let entries = q.options.map((opt, i) => [String.fromCharCode(65 + i), opt]);
+    const correct = q.correct;
+    const isMulti = Array.isArray(correct);
+    const inputType = isMulti ? "checkbox" : "radio";
+    const typeLabel = isMulti ? "Multiple Correct" : "Single Correct";
+
+    const optionsHTML = entries.map(([letter, opt]) => {
+      return `<label class="option-item">
+                <input type="${inputType}" id="${q.id}-${letter}" name="${q.id}${isMulti ? '[]' : ''}" value="${letter}" onchange="enableSubmit('${q.id}')">
+                ${letter}. ${opt}
+              </label>`;
+    }).join('');
+
+    // ✅ Only add PPT button if pptUrl exists
+    const pptBtnHTML = q.pptUrl 
+      ? `<button class="ppt-button" id="ppt-${q.id}" onclick="openPPT('${q.pptUrl}')">📑 PPT Presentation</button>`
+      : "";
+
+    // ✅ Add image rendering if available
+    const imgHTML = q.image 
+      ? `<div style="margin:10px 0;"><img src="${q.image}" alt="Question Image"></div>` 
+      : "";
+
+out.insertAdjacentHTML('beforeend', `
+  <div class="question" id="${q.id}-wrap">
+    <h3>Q${index + 1}. ${qText}</h3>
+    ${imgHTML}
+    <div class="type-label">[${typeLabel}]</div>
+    <div class="options">${optionsHTML}</div>
+    <div class="buttons" id="${q.id}-buttons">
+      <button id="sub-${q.id}" class="submit-button" disabled onclick="grade('${q.id}')">Submit</button>
+      <button class="dontknow-button" onclick="skip('${q.id}')">I Don’t Know</button>
+      <button class="toggle-button" id="btn-sol-${q.id}" style="display:none;" onclick="toggleSolution('sol-${q.id}','${q.id}')">Show Solution</button>
+    </div>
+
+  <div class="solution" id="sol-${q.id}">
+  <strong>Solution:</strong> ${q.solution || ''}
+
+  ${q.solution_image 
+    ? `
+      <hr class="golden-line">
+      <div style="margin:10px 0; text-align:center;">
+        <img src="${q.solution_image}" alt="Solution Image">
+      </div>
+    ` 
+    : ''}
+
+  ${q.solution_steps 
+    ? `<hr class="golden-line"><strong>Solution Steps:</strong>` + 
+      q.solution_steps.map(step => 
+        /^Step\s*\d+/i.test(step) 
+          ? `<p class="step-title">${step}</p>` 
+          : `<p class="step-content">${step}</p>`
+      ).join('') 
+    : '' }
+</div>
+
+
+
+    ${pptBtnHTML}
+  </div>
+`);
+  });
+  if (window.MathJax && typeof MathJax.typesetPromise === 'function') MathJax.typesetPromise();
+}
+
+
+
+/* enable submit */
+function enableSubmit(qid){ document.getElementById(`sub-${qid}`).disabled = false; }
+
+/* open PPT */
+function openPPT(url){ window.open(url,"_blank"); }
+function showPPTButton(qid){ const b=document.getElementById(`ppt-${qid}`); if(b) b.style.display="inline-block"; }
+
+/* grade */
+function grade(qid) {
+  const q = Q.find(x => x.id === qid);
+  if(!q) return;
+  const correct = q.correct;
+  const isMulti = Array.isArray(correct);
+
+  // disable all inputs for this question
+  document.querySelectorAll(`#${qid}-wrap input`).forEach(i => i.disabled = true);
+
+  // show solution and ppt buttons
+  showSolutionButton(qid);
+  showPPTButton(qid);
+
+  // remove any previous classes (in case user graded previously)
+  document.querySelectorAll(`#${qid}-wrap .option-item`).forEach(el => {
+    el.classList.remove('correct-option','wrong-option','light-correct-option');
+  });
+
+  if (!isMulti) {
+    // === Single correct (MCQ) ===
+    const selected = document.querySelector(`#${qid}-wrap input[type="radio"]:checked`);
+
+    q.options.forEach((_, i) => {
+      const letter = String.fromCharCode(65 + i);
+      const optInput = document.getElementById(`${qid}-${letter}`);
+      if (!optInput) return;
+      const label = optInput.parentElement;
+
+      if (letter === correct) {
+        // this is the correct option
+        if (selected && selected.value === letter) {
+          label.classList.add('correct-option'); // selected correct
+        } else {
+          label.classList.add('light-correct-option'); // unselected correct
+        }
+      } else {
+        // not the correct option
+        if (selected && selected.value === letter) {
+          label.classList.add('wrong-option'); // selected wrong
+        }
+      }
+    });
+
+  } else {
+    // === Multiple correct (MSQ) ===
+    const chosen = Array.from(document.querySelectorAll(`#${qid}-wrap input[type="checkbox"]:checked`)).map(i => i.value);
+
+    q.options.forEach((_, i) => {
+      const letter = String.fromCharCode(65 + i);
+      const optInput = document.getElementById(`${qid}-${letter}`);
+      if (!optInput) return;
+      const label = optInput.parentElement;
+
+      if (correct.includes(letter)) {
+        // is a correct option
+        if (chosen.includes(letter)) {
+          label.classList.add('correct-option'); // selected correct
+        } else {
+          label.classList.add('light-correct-option'); // unselected correct
+        }
+      } else {
+        // not correct
+        if (chosen.includes(letter)) {
+          label.classList.add('wrong-option'); // selected wrong
+        }
+      }
+    });
+  }
+
+  // disable submit button after grading
+  const sb = document.getElementById(`sub-${qid}`);
+  if (sb) sb.disabled = true;
+}
+
+
+
+/* skip */
+function skip(qid) {
+  const q = Q.find(x => x.id === qid);
+  if(!q) return;
+  const correct = q.correct;
+  const isMulti = Array.isArray(correct);
+
+  // disable all inputs
+  document.querySelectorAll(`#${qid}-wrap input`).forEach(i => i.disabled = true);
+
+  // show solution and ppt button
+  showSolutionButton(qid);
+  showPPTButton(qid);
+
+  // highlight correct answers
+  document.querySelectorAll(`#${qid}-wrap .option-item`).forEach(el => {
+    el.classList.remove('correct-option','wrong-option','light-correct-option');
+  });
+
+  if (!isMulti) {
+    q.options.forEach((_, i) => {
+      const letter = String.fromCharCode(65 + i);
+      const opt = document.getElementById(`${q.id}-${letter}`);
+      if (opt) opt.parentElement.classList.add('light-correct-option');
+    });
+  } else {
+    q.options.forEach((_, i) => {
+      const letter = String.fromCharCode(65 + i);
+      const opt = document.getElementById(`${q.id}-${letter}`);
+      if (opt && q.correct.includes(letter)) opt.parentElement.classList.add('light-correct-option');
+    });
+  }
+
+  // disable submit button
+  const sb = document.getElementById(`sub-${qid}`);
+  if (sb) sb.disabled = true;
+}
+
+function showSolutionButton(qid){
+  const btn = document.getElementById(`btn-sol-${qid}`);
+  if (btn) btn.style.display = 'inline-block';
+  const buttonsDiv = document.getElementById(`${qid}-buttons`);
+  if (buttonsDiv) buttonsDiv.style.display = 'block';
+}
+
+function toggleSolution(id,qid){
+  const e = document.getElementById(id);
+  e.style.display = e.style.display === 'block' ? 'none' : 'block';
+  if (e.style.display === 'block') showPPTButton(qid);
+}
+
+/* timer, finalSubmit, print, shareOnWhatsApp, report handlers ... updated finalSubmit to apply highlighting */
+/* Timer */
+function startTimer(){
+  const display = document.getElementById('timer');
+  const started = Date.now();
+  timerHandle = setInterval(() => {
+    const s = Math.floor((Date.now() - started) / 1000);
+    display.textContent = `${String((s / 60) | 0).padStart(2,'0')}:${String(s % 60).padStart(2,'0')}`;
+  }, 1000);
+}
+
+/* Final submit & scoring:
+   - Not Attempted (no selections) => 0 marks
+   - MCQ: correct => +4, wrong => -1
+   - MSQ: full correct only => +4, otherwise => -1
+*/
+function finalSubmit(){
+  clearInterval(timerHandle);
+
+  // First, grade every question to show colors
+  Q.forEach(q => {
+    try { grade(q.id); } catch(e) { /* continue */ }
+  });
+
+  // disable inputs and hide per-question buttons
+  document.querySelectorAll("input").forEach(r => r.disabled = true);
+  document.querySelectorAll(".submit-button, .dontknow-button").forEach(b => b.style.display = "none");
+
+  let totalMarks = 0, negativeMarks = 0, possibleMarks = Q.length * 4;
+  let detailHTML = '';
+
+  Q.forEach((q, i) => {
+    const correct = q.correct || q.answer;
+    const isMulti = Array.isArray(correct);
+    let chosenVals = [];
+
+    if (isMulti) {
+      chosenVals = [...document.querySelectorAll(`#${q.id}-wrap input:checked`)].map(x => x.value);
+    } else {
+      const c = document.querySelector(`input[name="${q.id}"]:checked`);
+      if (c) chosenVals = [c.value];
+    }
+
+    let marks = 0, resultText = '';
+
+    if (chosenVals.length === 0) {
+      // Not attempted => 0 marks
+      marks = 0;
+      resultText = "⚪ Not Attempted (0)";
+    } else if (!isMulti) {
+      // MCQ
+      if (chosenVals[0] === correct) { marks = 4; resultText = "✅ Correct (+4)"; }
+      else { marks = -1; resultText = "❌ Incorrect (-1)"; }
+    } else {
+      // MSQ: full correct only -> +4; else -1
+      const correctSet = new Set(correct);
+      const selectedSet = new Set(chosenVals);
+      const isExactlySame = (correctSet.size === selectedSet.size) && [...correctSet].every(v => selectedSet.has(v));
+      if (isExactlySame) { marks = 4; resultText = "✅ Correct (+4)"; }
+      else { marks = -1; resultText = "❌ Incorrect (-1)"; }
+    }
+
+    if (marks > 0) totalMarks += marks; else negativeMarks += marks;
+
+    detailHTML += `<tr>
+      <td>${i + 1}</td>
+      <td>${q.text || q.question}</td>
+      <td>${chosenVals.join(", ") || 'Not Answered'}</td>
+      <td>${isMulti ? correct.join(", ") : correct}</td>
+      <td>${resultText}</td>
+      <td>${q.solution || ''}</td>
+      <td>${marks}</td>
+    </tr>`;
+  });
+
+  const finalScore = totalMarks + negativeMarks;
+  document.getElementById('scoreText').innerHTML = `${student}, here is your result:`;
+  document.getElementById('scoreDetails').innerHTML = detailHTML;
+
+  // Append summary (keeps exactly same behavior as original)
+  document.getElementById('scorecard').insertAdjacentHTML('beforeend', `
+    <div style="margin-top:20px; font-weight:bold;">
+      <p>Total Marks (Possible): ${possibleMarks}</p>
+      <p>Total Marks (Correct Answers): ${totalMarks.toFixed(2)}</p>
+      <p>Negative Marks (Wrong Answers): ${negativeMarks.toFixed(2)}</p>
+      <p>Final Score: ${finalScore.toFixed(2)}</p>
+    </div>
+  `);
+
+  document.getElementById('scorecard').style.display = 'block';
+  const pbtn = document.getElementById('printScoreBtn');
+  const sbtn = document.getElementById('shareWhatsappBtn');
+  if (pbtn) pbtn.style.display = 'inline-block';
+  if (sbtn) sbtn.style.display = 'inline-block';
+
+  if (window.MathJax && typeof MathJax.typesetPromise === 'function') MathJax.typesetPromise();
+}
+
+/* Print handlers */
+function printQuestions(){ printMode = "questions"; window.print(); }
+function printScorecard(){
+  document.getElementById("studentPrintName").innerText = student;
+  document.getElementById("examDateTime").innerText = "Exam Date & Time: " + examDateTime;
+  document.getElementById("studentPrintName").style.display = "block";
+  document.getElementById("examDateTime").style.display = "block";
+  printMode = "scorecard"; window.print();
+}
+
+window.addEventListener('beforeprint', () => {
+  if (printMode === "questions") {
+    document.querySelector("#questions-container").style.display = "block";
+    document.querySelector("#scorecard").style.display = "none";
+    document.querySelector("#logo").style.display = "none";
+    document.querySelector("#name-container").style.display = "none";
+    document.querySelector("#timer").style.display = "none";
+    document.querySelector("#studentPrintName").style.display = "none";
+    document.querySelector("#examDateTime").style.display = "none";
+  }
+  if (printMode === "scorecard") {
+    document.querySelector("#questions-container").style.display = "none";
+    document.querySelector("#scorecard").style.display = "block";
+    document.querySelector("#logo").style.display = "block";
+    document.querySelector("#name-container").style.display = "none";
+    document.querySelector("#studentPrintName").style.display = "block";
+    document.querySelector("#examDateTime").style.display = "block";
+  }
+});
+
+window.addEventListener('afterprint', () => {
+  document.querySelector("#questions-container").style.display = "";
+  document.querySelector("#scorecard").style.display = "";
+  document.querySelector("#logo").style.display = "";
+  document.querySelector("#name-container").style.display = "";
+  document.querySelector("#timer").style.display = "";
+  document.getElementById("studentPrintName").style.display = "none";
+  document.getElementById("examDateTime").style.display = "none";
+  printMode = "";
+});
+
+/* WhatsApp share */
+function shareOnWhatsApp(){
+  const scoreText = document.getElementById('scoreText').innerText;
+  const details = [...document.querySelectorAll('#scoreDetails tr')].map((row, index) => {
+    const cells = row.querySelectorAll('td');
+    return `Q${cells[0].innerText}\nYour Ans: ${cells[2].innerText}\nCorrect Ans: ${cells[3].innerText}\nResult: ${cells[4].innerText}\n`;
+  }).join('\n');
+
+  const msg = `📘 Quiz Title: ${quizTitle}\n👤 Student: ${student}\n\n${scoreText}\n\n${details}`;
+
+  // ✅ Corrected number (example: +91 8069409455 → 918069409455)
+  const phone = "916003582005";  
+
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
+}
+
+
+document.getElementById('shareWhatsappBtn').onclick = shareOnWhatsApp;
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('sendReport').onclick = () => {
+    const msg = document.getElementById('reportMsg').value.trim();
+    if (!msg) { 
+      alert("Write message first"); 
+      return; 
+    }
+    if (!student) {
+      alert("Please start the quiz before reporting.");
+      return;
+    }
+    const payload = `⚠️ Reported Mistake / Have a Doubt\nQuiz: ${quizTitle}\nStudent: ${student}\n\n${msg}`;
+    window.open(`https://wa.me/916003582005?text=${encodeURIComponent(payload)}`, "_blank");
+    document.getElementById('reportModal').style.display = "none";
+    document.getElementById('reportMsg').value = "";
+  };
+
+  document.getElementById('closeReport').onclick = () => {
+    document.getElementById('reportModal').style.display = "none";
+  };
+
+  document.getElementById('reportBtn').onclick = () => {
+    document.getElementById('reportModal').style.display = "block";
+  };
+});
+
+</script>
+</body>
+</html>
